@@ -15,31 +15,31 @@ export class User {
   password: string;
 
   @Prop()
-  displayName: string;
+  displayName?: string;
 
   @Prop()
-  gender: string;
+  gender?: string;
 
   @Prop()
-  birthDate: Date;
+  birthDate?: Date;
 
   @Prop()
-  horoscopeSign: string;
+  horoscopeSign?: string;
 
   @Prop()
-  zodiacSign: string;
+  zodiacSign?: string;
 
   @Prop()
-  height: number;
+  height?: number;
 
   @Prop()
-  weight: number;
+  weight?: number;
 
   @Prop()
-  interest: string[];
+  interests?: string[];
 
   @Prop()
-  profilePicture: string;
+  profilePicture?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

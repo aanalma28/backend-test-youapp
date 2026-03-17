@@ -1,6 +1,4 @@
-import { Types } from 'mongoose';
-
 export interface JwtPayload {
-  sub: Types.ObjectId;
+  sub: string;
   email: string;
 }

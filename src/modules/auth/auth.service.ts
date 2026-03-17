@@ -35,12 +35,10 @@ export class AuthService {
       email: userData.email,
       password: hashedPassword,
     });
-    // payload JWT
-    const payload: JwtPayload = { sub: user._id, email: user.email };
-    const token = this.jwtService.sign(payload);
     return {
       message: 'User registered successfully',
-      token,
+      username: user.username,
+      email: user.email,
     };
   }
 
@@ -58,9 +56,12 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid Credentials');
     }
-
+    // payload JWT
+    const payload: JwtPayload = { sub: user._id.toString(), email: user.email };
+    const token = this.jwtService.sign(payload);
     return {
       message: 'User logged in successfully',
+      token,
     };
   }
 }
