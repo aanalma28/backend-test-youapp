@@ -1,8 +1,15 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  // eslint-disable-next-line prettier/prettier
-  imports: [MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/youapp')],
+  imports: [
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
+    }),
+  ],
 })
 export class DatabaseModule {}

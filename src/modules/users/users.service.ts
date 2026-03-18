@@ -37,14 +37,14 @@ export class UserService {
 
   async updateProfile(id: string, data: UpdateUserProfileDto) {
     const toUpdate: UpdateUserProfileDto = {};
-    if (data.username) toUpdate.username = data.username;
-    if (data.email) toUpdate.email = data.email;
-    if (data.password) {
+    if (data?.username) toUpdate.username = data.username;
+    if (data?.email) toUpdate.email = data.email;
+    if (data?.password) {
       const salt = await bcrypt.hash(data.password, 10);
       toUpdate.password = salt;
     }
     const updateProfile = await this.userModel
-      .findByIdAndUpdate(id, { $set: toUpdate }, { new: true })
+      .findByIdAndUpdate(id, { $set: toUpdate }, { returnDocument: 'after' })
       .exec();
 
     if (!updateProfile) {
@@ -63,11 +63,11 @@ export class UserService {
   async updateAbout(id: string, data: UpdateAboutDto) {
     const cleanData = Object.fromEntries(
       // eslint-disable-next-line prettier/prettier, @typescript-eslint/no-unused-vars
-      Object.entries(data).filter(([_, value]) => value != null && value !== ''),
+      Object.entries(data || {}).filter(([_, value]) => value != null && value !== ''),
     );
 
     const updateAbout = await this.userModel
-      .findByIdAndUpdate(id, { $set: cleanData }, { new: true })
+      .findByIdAndUpdate(id, { $set: cleanData }, { returnDocument: 'after' })
       .select('-_id -password -__v')
       .exec();
 
@@ -83,7 +83,7 @@ export class UserService {
 
   async updateInterests(id: string, data: UpdateInterestDto) {
     const updateAbout = await this.userModel
-      .findByIdAndUpdate(id, { $set: data }, { new: true })
+      .findByIdAndUpdate(id, { $set: data }, { returnDocument: 'after' })
       .select('interests -_id')
       .exec();
 

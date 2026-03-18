@@ -14,31 +14,31 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop()
+  @Prop({ default: null })
   displayName?: string;
 
-  @Prop()
+  @Prop({ default: null })
   gender?: string;
 
-  @Prop()
+  @Prop({ default: null })
   birthDate?: Date;
 
-  @Prop()
+  @Prop({ default: null })
   horoscopeSign?: string;
 
-  @Prop()
+  @Prop({ default: null })
   zodiacSign?: string;
 
-  @Prop()
+  @Prop({ default: null })
   height?: number;
 
-  @Prop()
+  @Prop({ default: null })
   weight?: number;
 
-  @Prop()
+  @Prop({ default: null })
   interests?: string[];
 
-  @Prop()
+  @Prop({ default: null })
   profilePicture?: string;
 }
 

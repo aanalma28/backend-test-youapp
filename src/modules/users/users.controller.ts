@@ -38,12 +38,14 @@ export class UserController {
   // Updating about user like display name, image, birthdate, etc.
   // The endpoint should be updateAbout
   @Patch('updateProfile')
+  @UseGuards(JwtAuthGuard)
   updateProfile(@GetUser() user: jwtPayloadInterface.JwtPayload, @Body() userData: UpdateAboutDto) {
     return this.userService.updateAbout(user.sub, userData);
   }
 
   // Updating interest
   @Patch('updateInterest')
+  @UseGuards(JwtAuthGuard)
   updateInterests(
     @GetUser() user: jwtPayloadInterface.JwtPayload,
     @Body() userData: UpdateInterestDto,
