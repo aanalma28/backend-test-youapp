@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Message } from './schemas/message.schema';
 import { ClientProxy } from '@nestjs/microservices';
 import { Model } from 'mongoose';
+import { SendMessageDto } from './dto/send-message.dto';
 
 @Injectable()
 export class MessageServices {
@@ -19,7 +20,7 @@ export class MessageServices {
   }
 
   async viewMessage(userA: string, userB: string) {
-    return this.msgModel
+    const messages = await this.msgModel
       .find({
         $or: [
           { senderId: userA, receiverId: userB },
@@ -27,10 +28,15 @@ export class MessageServices {
         ],
       })
       .sort({ createdAt: 1 })
+      .select('-_id -__v')
       .exec();
+    return {
+      message: 'Specific messages retrivied !',
+      data: { messages },
+    };
   }
 
-  async saveMsg(data: Message) {
+  async saveMsg(data: SendMessageDto) {
     return await this.msgModel.create(data);
   }
 }

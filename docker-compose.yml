@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # --- DATABASE: MongoDB ---
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_container
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - youapp_network
+
+  # --- MESSAGE BROKER: RabbitMQ ---
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_container
+    ports:
+      - '5672:5672' # Port AMQP for sending message
+      - '15672:15672' # Dashboard UI (Default login: guest/guest)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - youapp_network
+
+  # --- BACKEND: NestJS ---
+  api:
+    build: .
+    container_name: nestjs_api_container
+    ports:
+      - '${PORT:-3001}:${PORT:-3001}'
+    depends_on:
+      - mongodb
+      - rabbitmq
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/youappdb
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - RABBITMQ_QUEUE=${RABBITMQ_QUEUE:-msg_queue}
+      - JWT_SECRET=${JWT_SECRET:-super_secret_key_for_testing_123}
+      - PORT=${PORT:-3001}
+    networks:
+      - youapp_network
+
+volumes:
+  mongo_data:
+
+networks:
+  youapp_network:
+    driver: bridge
