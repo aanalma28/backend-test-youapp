@@ -51,3 +51,45 @@ Copy the `.env.example` file to `.env` and adjust the values if necessary:
 ```bash
 cp .env.example .env
 ```
+
+### 3. Running With Docker
+
+ Run the following command in the project root terminal.
+
+ ```bash
+docker-compose up --build -d
+```
+
+The application will be accessible on port ```3001``` (or the ```PORT``` defined in your ```.env```)
+
+### 4. 🧪 Running Unit Tests
+
+To ensure all functionalities are working as expected, you can run tests inside the container:
+
+```bash
+# Run all tests
+docker exec -it nestjs_api_container npm run test
+
+# Run tests with coverage report
+docker exec -it nestjs_api_container npm run test:cov
+```
+
+### 5. 🔗 Service Access Points
+
+- **Backend API**: ```http://localhost:3001/api```
+- **RabbitMQ Dashboard**: ```http://localhost:15672``` (User: ```guest```, Pass: ```guest```)
+- **MongoDB**: ```mongodb://localhost:27017```
+
+### 6. 📐 Messaging Architecture (Event-Driven)
+
+This project utilizes a Producer-Consumer pattern:
+
+1. **Client** sends a message via the ```POST /api/sendMessage``` endpoint.
+2. **Backend (Producer)** validates the data and pushes the payload to the **RabbitMQ** queue.
+3. **Worker (Consumer)** listens to the queue, persists the message into **MongoDB**, and logs a notification to the console.
+
+This approach ensures the system remains responsive and can handle high message traffic by decoupling the write operation from the API response.
+
+---
+
+Developed by Aan Alma for the YouApp Technical Test.
