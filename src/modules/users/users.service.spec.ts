@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -9,6 +8,11 @@ import { UserService } from './users.service';
 import { User } from './schemas/user.schema';
 import { NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+
+jest.mock('bcrypt', () => ({
+  hash: jest.fn(),
+  compare: jest.fn(),
+}));
 
 describe('UserService', () => {
   let service: UserService;
@@ -85,14 +89,12 @@ describe('UserService', () => {
       const dto = { password: 'newpassword123' };
       const mockUpdatedUser = { username: 'aan', email: 'aan@mail.com' };
 
+      (bcrypt.hash as jest.Mock).mockResolvedValue('hashed_pass');
       mockMongooseQuery.exec.mockResolvedValue(mockUpdatedUser);
-      const bcryptSpy = jest
-        .spyOn(bcrypt, 'hash')
-        .mockImplementation(() => Promise.resolve('hashed_pass'));
 
       await service.updateProfile('user-123', dto);
 
-      expect(bcryptSpy).toHaveBeenCalled();
+      expect(bcrypt.hash).toHaveBeenCalled();
       expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
         'user-123',
         { $set: { password: 'hashed_pass' } },
